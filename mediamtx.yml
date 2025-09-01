@@ -1,20 +1,17 @@
-# RTSP inside docker network
+# RTSP สำหรับ publisher ภายใน container
 rtspAddress: :8003
 
 # WebRTC / WHEP
-webrtcAddress: :8035            # WHEP endpoint (TCP)
-webrtcLocalUDPAddress: :8036    # ICE/Media (UDP)
-# webrtcLocalTCPAddress: :8036  # ถ้าต้อง TCP fallback ค่อยเปิด
-
-# ชื่อโฮสต์ที่ผู้ชมจะใช้เชื่อม (สำคัญมากเวลาอยู่หลัง NAT/Reverse Proxy)
-webrtcAdditionalHosts:
-  - localhost
-  - 127.0.0.1
-  - dekdee2.informatics.buu.ac.th
+webrtcAddress: :8889
+webrtcLocalUDPAddress: :8189
+# webrtcLocalTCPAddress: :8189  # uncomment ถ้าอยากใช้ TCP fallback
+webrtcAdditionalHosts: [localhost, 127.0.0.1]  # ถ้าเข้าผ่าน LAN/โดเมนจริง ให้เพิ่ม IP/hostname ที่นี่
 
 paths:
   city-traffic:
+    # สิทธิ์สำหรับ viewer
     readUser: viewer
     readPass: viewpass
+    # สิทธิ์สำหรับ publisher
     publishUser: pub
     publishPass: pubpass
