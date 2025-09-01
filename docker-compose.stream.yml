@@ -4,25 +4,23 @@ services:
   rtsp-server:
     image: bluenviron/mediamtx:latest
     container_name: rtsp-server
-    restart: unless-stopped
     volumes:
       - ./mediamtx.yml:/mediamtx.yml:ro
+    restart: unless-stopped
     ports:
-      - "8003:8003"   # RTSP บนโฮสต์ = 8003
+      # WHEP / signaling (TCP) – ใช้พอร์ตเดียวกับ domain
+      - "8035:8035/tcp"
+      # ICE/Media (UDP) – ต้องเปิดบนไฟร์วอลล์ด้วย
+      - "8036:8036/udp"
 
   ffmpeg-publisher:
     image: linuxserver/ffmpeg:version-4.4-cli
     container_name: ffmpeg-publisher
-    depends_on:
-      - rtsp-server
-    # ต่อผ่าน "พอร์ตของโฮสต์" ไม่อ้างชื่อ service
+    depends_on: [rtsp-server]
     command: >
       -re -stream_loop -1
       -i https://eu-central-1.linodeobjects.com/savant-data/demo/Free_City_Street_Footage.mp4
       -rtsp_transport tcp
-      -c copy -f rtsp
-      rtsp://pub:pubpass@host.docker.internal:8003/city-traffic
-    # บน Linux ต้องแมป host.docker.internal -> host-gateway เอง
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    restart: unless-stopped
+      -c:v libx264 -preset veryfast -tune zerolatency -g 30
+      -an -f rtsp
+      rtsp://pub:pubpass@rtsp-server:8003/city-traffic

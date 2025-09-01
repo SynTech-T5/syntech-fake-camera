@@ -1,12 +1,20 @@
-# ใช้ TCP เพื่อลดปัญหา NAT/UDP
-protocols: [tcp]
-
-# ให้ RTSP ฟังในคอนเทนเนอร์ที่พอร์ต 8003 (จะถูก map ออกโฮสต์เป็น 8003)
+# RTSP inside docker network
 rtspAddress: :8003
+
+# WebRTC / WHEP
+webrtcAddress: :8035            # WHEP endpoint (TCP)
+webrtcLocalUDPAddress: :8036    # ICE/Media (UDP)
+# webrtcLocalTCPAddress: :8036  # ถ้าต้อง TCP fallback ค่อยเปิด
+
+# ชื่อโฮสต์ที่ผู้ชมจะใช้เชื่อม (สำคัญมากเวลาอยู่หลัง NAT/Reverse Proxy)
+webrtcAdditionalHosts:
+  - localhost
+  - 127.0.0.1
+  - dekdee2.informatics.buu.ac.th
 
 paths:
   city-traffic:
-    publishUser: pub
-    publishPass: pubpass
     readUser: viewer
     readPass: viewpass
+    publishUser: pub
+    publishPass: pubpass
