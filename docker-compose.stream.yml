@@ -1,22 +1,25 @@
-version: "3.8"
+version: '3.8'
 
 services:
   rtsp-server:
     image: bluenviron/mediamtx:latest
     container_name: rtsp-server
-    command: ["/rtsp-origin.yml"]
+    # MediaMTX ไม่ต้องใช้ flag แค่ส่ง path ไฟล์ config ตรง ๆ
+    command: ["/mediamtx.yml"]
     volumes:
-      - ./rtsp-origin.yml:/rtsp-origin.yml:ro
+      - ./mediamtx.yml:/mediamtx.yml:ro
     restart: unless-stopped
     ports:
-      - "8003:8003/tcp"   # RTSP (ภายนอกจะ pull/push ได้)
+      - "8003:8003/tcp"   # RTSP (publisher)
+      - "8889:8889/tcp"   # WHEP/WHIP signaling
+      - "8189:8189/udp"   # WebRTC media (ICE/UDP)
+      # - "8189:8189/tcp" # (optional fallback TCP)
 
   ffmpeg-publisher:
     image: lscr.io/linuxserver/ffmpeg:latest
     container_name: ffmpeg-publisher
     depends_on:
       - rtsp-server
-    restart: unless-stopped
     command: >
       -re -stream_loop -1
       -i https://eu-central-1.linodeobjects.com/savant-data/demo/Free_City_Street_Footage.mp4
@@ -24,17 +27,4 @@ services:
       -c:v libx264 -preset veryfast -tune zerolatency -g 30
       -an -f rtsp
       rtsp://pub:pubpass@rtsp-server:8003/city-traffic
-
-  whep-gateway:
-    image: bluenviron/mediamtx:latest
-    container_name: whep-gateway
-    command: ["/whep-gateway.yml"]
-    volumes:
-      - ./whep-gateway.yml:/whep-gateway.yml:ro
-    depends_on:
-      - rtsp-server
     restart: unless-stopped
-    ports:
-      - "8035:8035/tcp"   # HTTP: /whep, /whip, หน้า web, ฯลฯ
-      - "8189:8189/udp"   # ICE/UDP
-      - "8888:8888/tcp"   # HLS (ไว้เทส) — จะมีหรือไม่มีก็ได้

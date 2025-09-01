@@ -1,43 +1,17 @@
-# ========= Listener & WebRTC =========
-# RTSP (ใช้เฉพาะถ้าจะให้ publisher ภายนอก push เข้าเรา)
+# RTSP สำหรับ publisher ภายใน container
 rtspAddress: :8003
 
-# WebRTC / WHEP (สำหรับฝั่งเว็บ)
-webrtcAddress: :8035
+# WebRTC / WHEP
+webrtcAddress: :8889
 webrtcLocalUDPAddress: :8189
-# webrtcLocalTCPAddress: :8189     # uncomment ถ้าต้องการ TCP fallback
-webrtcAdditionalHosts:
-  - localhost
-  - 127.0.0.1
-  - dekdee2.informatics.buu.ac.th  # << เพิ่มโดเมนจริงไว้ด้วย
+# webrtcLocalTCPAddress: :8189  # uncomment ถ้าอยากใช้ TCP fallback
+webrtcAdditionalHosts: [localhost, 127.0.0.1]  # ถ้าเข้าผ่าน LAN/โดเมนจริง ให้เพิ่ม IP/hostname ที่นี่
 
-# ถ้าอยู่หลัง NAT/Firewall แนะนำระบุ ICE servers
-webrtcICEServers:
-  - urls:
-      - stun:stun.l.google.com:19302
-
-# ========= PATHS (2 กล้อง) =========
 paths:
-  # ---- กล้อง 1: camera02 ----
-  camera02:
-    # ใส่สิทธิ์สำหรับ viewer (จะถามผ่าน HTTP Basic เมื่อเรียก WHEP)
-    readUser: viewer
-    readPass: viewpass
-
-    # ดึงสตรีมจาก RTSP (ตัวอย่าง: camerassg02)
-    # แก้เป็น URL ของกล้อง camera02 จริง ๆ ของคุณ
-    source: rtsp://relayreader:VeryStrongPassword123@100.114.77.30:9554/camerassg02
-    sourceOnDemand: yes
-    sourceProtocol: tcp     # ใช้ RTSP(TCP) ให้เสถียรกว่าใน VPN/Tailscale
-
-  # ---- กล้อง 2: city-traffic ----
   city-traffic:
+    # สิทธิ์สำหรับ viewer
     readUser: viewer
     readPass: viewpass
-
-    # !! แก้ค่าตรงนี้เป็น RTSP ของกล้องที่สอง !!
-    # ตัวอย่าง path ที่คุณพิมพ์มา "city-trfic" ให้ตรวจสอบสะกดจริงบนฝั่ง RTSP server
-    # ถ้าถูกคือ: rtsp://<user>:<pass>@100.114.xx.xx:9554/city-traffic
-    source: rtsp://user:pass@100.114.xx.xx:9554/city-traffic
-    sourceOnDemand: yes
-    sourceProtocol: tcp
+    # สิทธิ์สำหรับ publisher
+    publishUser: pub
+    publishPass: pubpass
