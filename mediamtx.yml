@@ -1,0 +1,12 @@
+# ใช้ TCP เพื่อลดปัญหา NAT/UDP
+protocols: [tcp]
+
+# ให้ RTSP ฟังในคอนเทนเนอร์ที่พอร์ต 8003 (จะถูก map ออกโฮสต์เป็น 8003)
+rtspAddress: :8003
+
+paths:
+  city-traffic:
+    publishUser: pub
+    publishPass: pubpass
+    readUser: viewer
+    readPass: viewpass
