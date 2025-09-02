@@ -17,7 +17,6 @@ paths:
     readPass: viewpass
     source: rtsp://relayreader:VeryStrongPassword123@100.114.77.30:9554/camerassg02
     sourceOnDemand: no
-    sourceOnDemandStartTimeout: 30s
     rtspTransport: tcp
 
   city-traffic:

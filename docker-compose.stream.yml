@@ -35,8 +35,7 @@ services:
     restart: unless-stopped
     depends_on:
       - rtsp-server
-    network_mode: "host" 
-    # ports:
-    #   - "8035:8035/tcp"   # WHEP/WHIP (HTTP signaling)
-    #   - "8189:8189/udp"   # WebRTC ICE/UDP
-    #   - "8888:8888/tcp"   # HLS (ไว้เทสง่ายๆ)
+    ports:
+      - "8035:8035/tcp"   # WHEP/WHIP (HTTP signaling)
+      - "8189:8189/udp"   # WebRTC ICE/UDP
+      - "8888:8888/tcp"   # HLS (ไว้เทสง่ายๆ)
