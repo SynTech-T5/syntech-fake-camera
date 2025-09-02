@@ -1,33 +1,3 @@
-version: '3.8'
-
-services:
-  # RTSP origin server (ภายในเครือข่าย compose)
-  rtsp-server:
-    image: bluenviron/mediamtx:latest
-    container_name: rtsp-server
-    command: ["/rtsp-origin.yml"]
-    volumes:
-      - ./rtsp-origin.yml:/rtsp-origin.yml:ro
-    restart: unless-stopped
-    ports:
-      - "8003:8003/tcp"   # RTSP สำหรับอ่าน/เขียนจากภายนอกหากต้องการ (optional)
-
-  # (optional) ตัวอย่าง publisher: ป้อนวิดีโอเดโม่เข้า rtsp-server:/city-traffic
-  ffmpeg-publisher:
-    image: lscr.io/linuxserver/ffmpeg:latest
-    container_name: ffmpeg-publisher
-    depends_on:
-      - rtsp-server
-    restart: unless-stopped
-    command: >
-      -re -stream_loop -1
-      -i https://eu-central-1.linodeobjects.com/savant-data/demo/Free_City_Street_Footage.mp4
-      -rtsp_transport tcp
-      -c:v libx264 -preset veryfast -tune zerolatency -g 30
-      -an -f rtsp
-      rtsp://pub:pubpass@rtsp-server:8003/city-traffic
-
-  # WHEP gateway: ดึงสตรีมจาก Tailscale + จาก rtsp-server แล้วเผยแพร่เป็น WHEP
   whep-gateway:
     image: bluenviron/mediamtx:latest
     container_name: whep-gateway
@@ -36,7 +6,8 @@ services:
       - ./whep-gateway.yml:/whep-gateway.yml:ro
     restart: unless-stopped
     ports:
-      - "8035:8035/tcp"   # WHEP/WHIP (HTTP signaling)
-      - "8189:8189/udp"   # WebRTC media (ICE/UDP)
+      - "8035:8035/tcp"    # WHEP/WHIP
+      - "8189:8189/udp"    # WebRTC ICE/UDP
+      - "8888:8888/tcp"    # HLS (สำหรับทดสอบ)
     depends_on:
       - rtsp-server

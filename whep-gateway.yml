@@ -1,31 +1,34 @@
-# ============ WebRTC / WHEP ============
+# ========= WebRTC / WHEP =========
 webrtcAddress: :8035
 webrtcLocalUDPAddress: :8189
-# webrtcLocalTCPAddress: :8189   # (ถ้าต้องการ fallback TCP ให้ uncomment และเปิดพอร์ตด้วย)
+# webrtcLocalTCPAddress: :8189   # <- เปิดถ้าจะใช้ TCP fallback
 webrtcAdditionalHosts:
   - localhost
   - 127.0.0.1
   - dekdee2.informatics.buu.ac.th
 
-# แนะนำใส่ STUN สำหรับ NAT traversal
-webrtcICEServers:
-  - stun:stun.l.google.com:19302
+# ใช้ key ใหม่ตาม v1.14.0
+webrtcICEServers2:
+  - urls:
+    - stun:stun.l.google.com:19302
 
-# (ไม่ต้องเปิด RTSP ในตัวนี้ก็ได้ เพราะเราจะ pull จากที่อื่นและปล่อยเป็น WHEP เท่านั้น)
-
+# ========= PATHS =========
 paths:
-  # --- กล้อง 1: camera02 (ดึงจาก Tailscale RTSP) ---
   camera02:
+    # ยังใช้ readUser/readPass ได้ (แค่ถูก deprecate) — ถ้าอยากเปลี่ยนเป็น authInternalUsers ค่อยทำภายหลังได้
     readUser: viewer
     readPass: viewpass
+
+    # ดึงจาก Tailscale RTSP
     source: rtsp://relayreader:VeryStrongPassword123@100.114.77.30:9554/camerassg02
     sourceOnDemand: yes
-    sourceProtocol: tcp    # RTSP over TCP เสถียรกว่าใน VPN/Tailscale
+    rtspTransport: tcp     # แทน sourceProtocol
 
-  # --- กล้อง 2: city-traffic (ดึงจาก rtsp-server ภายใน compose) ---
   city-traffic:
     readUser: viewer
     readPass: viewpass
+
+    # ดึงจาก rtsp-server ภายใน compose
     source: rtsp://viewer:viewpass@rtsp-server:8003/city-traffic
     sourceOnDemand: yes
-    sourceProtocol: tcp
+    rtspTransport: tcp
