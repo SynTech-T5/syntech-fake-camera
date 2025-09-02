@@ -1,16 +1,15 @@
 webrtcAddress: :8035
 webrtcLocalUDPAddress: :8189
-# webrtcLocalTCPAddress: :8189
+# webrtcLocalTCPAddress: :8189   # เปิดถ้าอยากมี TCP fallback
 webrtcAdditionalHosts:
   - localhost
   - 127.0.0.1
   - dekdee2.informatics.buu.ac.th
 
+# ✅ รูปแบบที่ถูกกับ v1.14.0 คือใส่คีย์ "url" (ไม่ใช่ "urls")
 webrtcICEServers2:
-  - urls:
-      - stun:stun.l.google.com:19302
-  - urls:
-      - stun:global.stun.twilio.com:3478
+  - url: stun:stun.l.google.com:19302
+  - url: stun:global.stun.twilio.com:3478
 
 paths:
   camera02:
