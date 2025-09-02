@@ -1,14 +1,10 @@
-# เปิด RTSP บน :8003
+# MediaMTX สำหรับรับ/ให้บริการ RTSP ภายใน compose
 rtspAddress: :8003
 
-# ไม่ต้องตั้งค่า WebRTC ในไฟล์นี้ก็ได้ (เราจะใช้ตัว whep-gateway เป็นคนปล่อย WHEP)
-
 paths:
-  # path สำหรับสตรีมภายใน: city-traffic
   city-traffic:
-    # viewer RTSP (อ่านออก) — ให้ตรงกับที่คุณใช้อยู่
+    # ใช้ของเดิมได้ (แม้ deprecated แต่ยังทำงาน)
     readUser: viewer
     readPass: viewpass
-    # publisher RTSP (เขียนเข้า)
     publishUser: pub
     publishPass: pubpass

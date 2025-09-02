@@ -1,34 +1,30 @@
-# ========= WebRTC / WHEP =========
+# เปิด WHEP/ICE
 webrtcAddress: :8035
 webrtcLocalUDPAddress: :8189
-# webrtcLocalTCPAddress: :8189   # <- เปิดถ้าจะใช้ TCP fallback
+# webrtcLocalTCPAddress: :8189   # เปิดถ้าจะใช้ TCP fallback
 webrtcAdditionalHosts:
   - localhost
   - 127.0.0.1
   - dekdee2.informatics.buu.ac.th
 
-# ใช้ key ใหม่ตาม v1.14.0
+# ใช้ key ใหม่เพื่อตัด warning
 webrtcICEServers2:
   - urls:
-    - stun:stun.l.google.com:19302
+      - stun:stun.l.google.com:19302
 
-# ========= PATHS =========
 paths:
+  # กล้อง 1: ดึงจาก Tailscale
   camera02:
-    # ยังใช้ readUser/readPass ได้ (แค่ถูก deprecate) — ถ้าอยากเปลี่ยนเป็น authInternalUsers ค่อยทำภายหลังได้
     readUser: viewer
     readPass: viewpass
-
-    # ดึงจาก Tailscale RTSP
     source: rtsp://relayreader:VeryStrongPassword123@100.114.77.30:9554/camerassg02
     sourceOnDemand: yes
-    rtspTransport: tcp     # แทน sourceProtocol
+    rtspTransport: tcp
 
+  # กล้อง 2: ดึงจาก rtsp-server ภายใน compose
   city-traffic:
     readUser: viewer
     readPass: viewpass
-
-    # ดึงจาก rtsp-server ภายใน compose
     source: rtsp://viewer:viewpass@rtsp-server:8003/city-traffic
     sourceOnDemand: yes
     rtspTransport: tcp
