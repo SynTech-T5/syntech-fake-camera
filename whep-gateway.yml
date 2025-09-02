@@ -9,8 +9,7 @@ webrtcAdditionalHosts:
 
 # แนะนำใส่ STUN สำหรับ NAT traversal
 webrtcICEServers:
-  - urls:
-      - stun:stun.l.google.com:19302
+  - stun:stun.l.google.com:19302
 
 # (ไม่ต้องเปิด RTSP ในตัวนี้ก็ได้ เพราะเราจะ pull จากที่อื่นและปล่อยเป็น WHEP เท่านั้น)
 
