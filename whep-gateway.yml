@@ -1,16 +1,16 @@
-# ========= WebRTC / WHEP =========
 webrtcAddress: :8035
 webrtcLocalUDPAddress: :8189
-# webrtcLocalTCPAddress: :8189   # เปิดถ้าจะใช้ TCP fallback
+# webrtcLocalTCPAddress: :8189
 webrtcAdditionalHosts:
   - localhost
   - 127.0.0.1
   - dekdee2.informatics.buu.ac.th
 
-# ต้องเป็น array ของ string ไม่ใช่ object
 webrtcICEServers2:
-  - stun:stun.l.google.com:19302
-  - stun:global.stun.twilio.com:3478
+  - urls:
+      - stun:stun.l.google.com:19302
+  - urls:
+      - stun:global.stun.twilio.com:3478
 
 paths:
   camera02:
