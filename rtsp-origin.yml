@@ -4,7 +4,7 @@ rtspAddress: :8003
 paths:
   city-traffic:
     # ใช้ของเดิมได้ (แม้ deprecated แต่ยังทำงาน)
-    readUser: viewer
-    readPass: viewpass
+    # readUser: viewer
+    # readPass: viewpass
     publishUser: pub
     publishPass: pubpass

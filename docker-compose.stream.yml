@@ -9,9 +9,8 @@ services:
       - ./rtsp-origin.yml:/rtsp-origin.yml:ro
     restart: unless-stopped
     ports:
-      - "8003:8003/tcp"   # RTSP (optional ถ้าจะให้ภายนอก push/pull)
+      - "8003:8003/tcp"   # RTSP (ภายนอกจะ pull/push ได้)
 
-  # (optional) ตัวอย่าง publisher ป้อนเดโม่เข้า rtsp-server:/city-traffic
   ffmpeg-publisher:
     image: lscr.io/linuxserver/ffmpeg:latest
     container_name: ffmpeg-publisher
@@ -32,10 +31,10 @@ services:
     command: ["/whep-gateway.yml"]
     volumes:
       - ./whep-gateway.yml:/whep-gateway.yml:ro
-    restart: unless-stopped
     depends_on:
       - rtsp-server
+    restart: unless-stopped
     ports:
-      - "8035:8035/tcp"   # WHEP/WHIP (HTTP signaling)
-      - "8189:8189/udp"   # WebRTC ICE/UDP
-      - "8888:8888/tcp"   # HLS (ไว้เทสง่ายๆ)
+      - "8035:8035/tcp"   # HTTP: /whep, /whip, หน้า web, ฯลฯ
+      - "8189:8189/udp"   # ICE/UDP
+      - "8888:8888/tcp"   # HLS (ไว้เทส) — จะมีหรือไม่มีก็ได้
