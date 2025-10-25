@@ -1,16 +1,14 @@
-version: '3.8'
-
 services:
   rtsp-server:
     image: bluenviron/mediamtx:latest
     container_name: rtsp-server
-    # MediaMTX ไม่ต้องใช้ flag แค่ส่ง path ไฟล์ config ตรง ๆ
-    command: ["/mediamtx.yml"]
+    restart: unless-stopped
+    # MediaMTX จะอ่าน /mediamtx.yml โดยอัตโนมัติ แค่แมปไฟล์เข้ามาพอ
     volumes:
       - ./mediamtx.yml:/mediamtx.yml:ro
-      # ICE/Media (UDP) – ต้องเปิดบนไฟร์วอลล์ด้วย
-      - "8036:8036/udp"
-      - "8003:8003/tcp"   # RTSP (publisher)
+    ports:
+      - "8036:8036/udp"   # ICE/Media (UDP) – อย่าลืมเปิดไฟร์วอลล์ด้วย
+      - "8003:8003/tcp"   # RTSP (publisher) — ตาม config ของคุณ
       - "8889:8889/tcp"   # WHEP/WHIP signaling
       - "8189:8189/udp"   # WebRTC media (ICE/UDP)
       # - "8189:8189/tcp" # (optional fallback TCP)
@@ -20,6 +18,7 @@ services:
     container_name: ffmpeg-publisher
     depends_on:
       - rtsp-server
+    restart: unless-stopped
     command: >
       -re -stream_loop -1
       -i https://eu-central-1.linodeobjects.com/savant-data/demo/Free_City_Street_Footage.mp4
@@ -27,4 +26,3 @@ services:
       -c:v libx264 -preset veryfast -tune zerolatency -g 30
       -an -f rtsp
       rtsp://pub:pubpass@rtsp-server:8003/city-traffic
-    restart: unless-stopped
