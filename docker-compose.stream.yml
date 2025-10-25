@@ -1,20 +1,22 @@
-version: '3.8'
+version: '3.9'
 
 services:
+  # 🛰️ RTSP Hub (MediaMTX)
   rtsp-server:
-    image: bluenviron/mediamtx:latest
+    image: bluenviron/mediamtx:1.15.2
     container_name: rtsp-server
-    # MediaMTX ไม่ต้องใช้ flag แค่ส่ง path ไฟล์ config ตรง ๆ
     command: ["/mediamtx.yml"]
     volumes:
       - ./mediamtx.yml:/mediamtx.yml:ro
     restart: unless-stopped
     ports:
-      - "8003:8003/tcp"   # RTSP (publisher)
-      - "8889:8889/tcp"   # WHEP/WHIP signaling
-      - "8189:8189/udp"   # WebRTC media (ICE/UDP)
-      # - "8189:8189/tcp" # (optional fallback TCP)
+      - "8003:8003/tcp"   # RTSP
+      - "8889:8889/tcp"   # WebRTC
+      - "8189:8189/udp"
+    networks:
+      - stream-net
 
+  # 🎬 จำลองกล้องส่งวิดีโอเข้า MediaMTX
   ffmpeg-publisher:
     image: lscr.io/linuxserver/ffmpeg:latest
     container_name: ffmpeg-publisher
@@ -28,3 +30,61 @@ services:
       -an -f rtsp
       rtsp://pub:pubpass@rtsp-server:8003/city-traffic
     restart: unless-stopped
+    networks:
+      - stream-net
+
+  # 🧠 YOLO Model Processor (GPU + OpenCV)
+  yolo-city:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: yolo-city
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    volumes:
+      - ./model.py:/app/model.py
+      - ./models:/app/models
+      - ./mediamtx.yml:/app/mediamtx.yml:ro
+    depends_on:
+      - rtsp-server
+      - ffmpeg-publisher
+    command: ["bash", "-c", "sleep 5 && python3 model.py"]
+    networks:
+      - stream-net
+      
+  yolo-phone:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: yolo-phone
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    volumes:
+      - ./model.py:/app/model.py
+      - ./models:/app/models
+      - ./mediamtx.yml:/app/mediamtx.yml:ro
+    depends_on:
+      - rtsp-server
+    command: ["bash", "-c", "sleep 5 && python3 model.py phone-cam"]
+    networks:
+      - stream-net
+
+networks:
+  stream-net:
+    driver: bridge

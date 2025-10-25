@@ -1,17 +1,70 @@
-# RTSP สำหรับ publisher ภายใน container
-rtspAddress: :8003
+# ============================================
+# ✅ MediaMTX Configuration (v1.15+ Compatible)
+# ============================================
 
-# WebRTC / WHEP
+logLevel: info
+
+# 🛰️ RTSP / WebRTC Ports
+rtspAddress: :8003
 webrtcAddress: :8889
 webrtcLocalUDPAddress: :8189
-# webrtcLocalTCPAddress: :8189  # uncomment ถ้าอยากใช้ TCP fallback
-webrtcAdditionalHosts: [localhost, 127.0.0.1]  # ถ้าเข้าผ่าน LAN/โดเมนจริง ให้เพิ่ม IP/hostname ที่นี่
+webrtcAdditionalHosts: ["localhost", "127.0.0.1", "192.168.1.100"]
 
+# 🔐 Authentication
+authInternalUsers:
+  - user: pub
+    pass: pubpass
+    permissions:
+      # ✅ สิทธิ์ publish สำหรับกล้องหลัก
+      - action: publish
+        path: city-traffic
+      - action: publish
+        path: city-traffic-processed
+
+      # ✅ สิทธิ์ publish สำหรับกล้องมือถือ
+      - action: publish
+        path: phone-cam
+      - action: publish
+        path: phone-cam-processed
+
+  - user: viewer
+    pass: viewpass
+    permissions:
+      # ✅ สิทธิ์อ่านสำหรับทุก stream
+      - action: read
+        path: city-traffic
+      - action: read
+        path: city-traffic-processed
+
+      - action: read
+        path: phone-cam
+      - action: read
+        path: phone-cam-processed
+
+
+authMethods: [basic]
+
+# 🎥 Streams
 paths:
+  # 🎬 กล้องจำลอง (ffmpeg publisher)
   city-traffic:
-    # สิทธิ์สำหรับ viewer
-    readUser: viewer
-    readPass: viewpass
-    # สิทธิ์สำหรับ publisher
-    publishUser: pub
-    publishPass: pubpass
+    source: publisher
+
+  city-traffic-processed:
+    source: publisher
+
+  # 📱 กล้องโทรศัพท์
+  phone-cam:
+    source: rtsp://192.168.1.3:8080/h264_ulaw.sdp
+    sourceOnDemand: yes
+
+  phone-cam-processed:
+    source: publisher
+
+  # 🏢 กล้องภายนอก (เช่นสำนักงาน)
+  company-cam:
+    source: rtsp://43.209.204.248:8554/stream1
+    sourceOnDemand: yes
+
+  company-cam-processed:
+    source: publisher
