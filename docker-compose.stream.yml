@@ -8,8 +8,8 @@ services:
     command: ["/mediamtx.yml"]
     volumes:
       - ./mediamtx.yml:/mediamtx.yml:ro
-    restart: unless-stopped
-    ports:
+      # ICE/Media (UDP) – ต้องเปิดบนไฟร์วอลล์ด้วย
+      - "8036:8036/udp"
       - "8003:8003/tcp"   # RTSP (publisher)
       - "8889:8889/tcp"   # WHEP/WHIP signaling
       - "8189:8189/udp"   # WebRTC media (ICE/UDP)
