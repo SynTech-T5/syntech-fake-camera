@@ -80,17 +80,18 @@ ffmpeg_output = [
     "-pix_fmt", "bgr24",
     "-s", f"{width}x{height}",
     "-i", "-",
-    "-c:v", "h264_nvenc",   # ✅ GPU Encode
+    "-c:v", "h264_nvenc",
     "-preset", "p5",
-    "-rc:v", "constqp",
-    "-qp", "25",
-    "-g", "25",
+    "-tune", "ull",  # ✅ ultra-low latency (สำคัญ)
+    "-profile:v", "baseline",  # ✅ บังคับใช้ Baseline Profile
+    "-level", "4.1",
     "-b:v", "2M",
-    "-bufsize", "2M",
-    "-fflags", "flush_packets",
-    "-use_wallclock_as_timestamps", "1",
-    "-f", "rtsp",
+    "-g", "25",
+    "-bf", "0",                # ✅ ปิด B-frames (WebRTC ต้องการ)
+    "-pix_fmt", "yuv420p",     # ✅ ให้เป็น pixel format มาตรฐาน
     "-rtsp_transport", "tcp",
+    "-fflags", "flush_packets",
+    "-f", "rtsp",
     output_url
 ]
 

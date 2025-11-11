@@ -5,6 +5,7 @@
 logLevel: info
 
 # 🛰️ RTSP / WebRTC Ports
+webrtc: yes
 rtspAddress: :8003
 webrtcAddress: :8889
 webrtcLocalUDPAddress: :8189
