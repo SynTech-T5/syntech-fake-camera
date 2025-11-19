@@ -64,7 +64,7 @@ paths:
 
   # 🏢 กล้องภายนอก (เช่นสำนักงาน)
   company-cam:
-    source: rtsp://43.209.204.248:8554/stream1
+    source: rtsp://43.209.5.94:8554/stream1
     sourceOnDemand: yes
 
   company-cam-processed:
