@@ -84,6 +84,31 @@ services:
     command: ["bash", "-c", "sleep 5 && python3 model.py phone-cam"]
     networks:
       - stream-net
+  
+  yolo-company:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: yolo-company
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    volumes:
+      - ./model.py:/app/model.py
+      - ./models:/app/models
+      - ./mediamtx.yml:/app/mediamtx.yml:ro
+    depends_on:
+      - rtsp-server
+    command: ["bash", "-c", "sleep 5 && python3 model.py company-cam"]
+    networks:
+      - stream-net
 
 networks:
   stream-net:

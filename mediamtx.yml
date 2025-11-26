@@ -9,7 +9,7 @@ webrtc: yes
 rtspAddress: :8003
 webrtcAddress: :8889
 webrtcLocalUDPAddress: :8189
-webrtcAdditionalHosts: ["localhost", "127.0.0.1", "192.168.1.100"]
+webrtcAdditionalHosts: ["localhost", "127.0.0.1", "192.168.1.39"]
 
 # 🔐 Authentication
 authInternalUsers:
@@ -28,6 +28,12 @@ authInternalUsers:
       - action: publish
         path: phone-cam-processed
 
+      # ✅ สิทธิ์ publish สำหรับกล้องบริษัท
+      - action: publish
+        path: company-cam
+      - action: publish
+        path: company-cam-processed
+
   - user: viewer
     pass: viewpass
     permissions:
@@ -42,6 +48,10 @@ authInternalUsers:
       - action: read
         path: phone-cam-processed
 
+      - action: read
+        path: company-cam
+      - action: read
+        path: company-cam-processed
 
 authMethods: [basic]
 
